@@ -1,5 +1,7 @@
-﻿using DepreciationDBApp.Domain.Entities;
+﻿using DepreciationDBApp.Domain.DepreciationDBEntities;
+using DepreciationDBApp.Domain.Entities;
 using DepreciationDBApp.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +18,12 @@ namespace DepreciationDBApp.Infrastructure.Repositories
             this.depreciationDbContext = depreciationDbContext;
 
         }
-        public void Create(Employee t)
+        public int Create(Employee t)
         {
             try
             {
                 depreciationDbContext.Employees.Add(t);
-                depreciationDbContext.SaveChanges();
+                return depreciationDbContext.SaveChanges();
             }
             catch (Exception)
             {
@@ -136,6 +138,11 @@ namespace DepreciationDBApp.Infrastructure.Repositories
             {
                 throw;
             }
+        }
+
+        public IDbContextTransaction GetTransaction()
+        {
+            return ((DepreciationDBContext)depreciationDbContext).Database.BeginTransaction();
         }
     }
 }

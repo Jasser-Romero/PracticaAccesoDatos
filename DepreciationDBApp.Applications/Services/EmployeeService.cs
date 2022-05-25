@@ -1,6 +1,7 @@
 ﻿using DepreciationDBApp.Applications.Interfaces;
 using DepreciationDBApp.Domain.Entities;
 using DepreciationDBApp.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,16 @@ namespace DepreciationDBApp.Applications.Services
     {
         private IEmployeeRepository employeeRepository;
         private IAssetEmployeeRepository assetEmployeeRepository;
-        public EmployeeService(IAssetEmployeeRepository assetEmployeeRepository, IEmployeeRepository employeeRepository)
+        private IAssetRepository assetRepository;
+        public EmployeeService(IAssetEmployeeRepository assetEmployeeRepository, IEmployeeRepository employeeRepository, IAssetRepository assetRepository)
         {
             this.assetEmployeeRepository = assetEmployeeRepository;
             this.employeeRepository = employeeRepository;
+            this.assetRepository = assetRepository;
         }
-        public void Create(Employee t)
+        public int Create(Employee t)
         {
-            employeeRepository.Create(t);
+            return employeeRepository.Create(t);
         }
 
         public bool Delete(Employee t)
@@ -50,11 +53,44 @@ namespace DepreciationDBApp.Applications.Services
 
         public bool SetAssetsToEmployee(Employee employee, List<Asset> assets, DateTime efectiveDate)
         {
-            foreach(Asset asset in assets)
+            bool success = false;
+            using IDbContextTransaction transaction = employeeRepository.GetTransaction();
+            try
             {
-                SetAssetToEmployee(employee, asset, efectiveDate);
+                if (assets == null || assets.Count == 0)
+                {
+                    throw new ArgumentNullException("La lista no puede estar vacia");
+                }
+                foreach (Asset asset in assets)
+                {
+                    success = SetAssetToEmployee(employee, asset, efectiveDate);
+                    if (!success)
+                    {
+                        throw new Exception($"Fallo al asignar el asseId{asset.Id} al empleado {employee.Id}.");
+                        //break;
+                    }
+                    asset.Status = "Asignado";
+                    success = assetRepository.Update(asset) > 0;
+
+                    if (!success)
+                    {
+                        throw new Exception($"Fallo al actualizar el asseId{asset.Id}.");
+                    }
+                }
+
+
+                if (success)
+                {
+                    transaction.Commit();
+                }
+
+                return success;
             }
-            return true;
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public bool SetAssetToEmployee(Employee employee, Asset asset, DateTime efectiveDate)

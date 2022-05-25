@@ -16,7 +16,7 @@ namespace DepreciationDBApp.Infrastructure.Repositories
         {
             this.depreciationDbContext = depreciationDbContext;
         }
-        public void Create(Asset t)
+        public int Create(Asset t)
         {
             if (t is null)
             {
@@ -24,7 +24,7 @@ namespace DepreciationDBApp.Infrastructure.Repositories
             }
 
             depreciationDbContext.Assets.Add(t);
-            depreciationDbContext.SaveChanges();
+            return depreciationDbContext.SaveChanges();
         }
 
         public bool Delete(Asset t)

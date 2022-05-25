@@ -16,9 +16,9 @@ namespace DepreciationDBApp.Applications.Services
         {
             this.assetEmployeeRepository = assetEmployeeRepository;
         }
-        public void Create(AssetEmployee t)
+        public int Create(AssetEmployee t)
         {
-            assetEmployeeRepository.Create(t);
+            return assetEmployeeRepository.Create(t);
         }
 
         public bool Delete(AssetEmployee t)

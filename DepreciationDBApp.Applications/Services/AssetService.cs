@@ -17,14 +17,14 @@ namespace DepreciationDBApp.Applications.Services
         {
             this.assetRepository = assetRepository;
         }
-        public void Create(Asset t)
+        public int Create(Asset t)
         {
             if(t == null)
             {
                 throw new ArgumentNullException("El Asset no puede ser null.");
             }
 
-            assetRepository.Create(t);
+            return assetRepository.Create(t);
         }
 
         public bool Delete(Asset t)
