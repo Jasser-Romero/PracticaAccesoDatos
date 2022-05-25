@@ -51,6 +51,7 @@ namespace DepreciationDBApp.Forms
             this.txtDni = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.btnSet = new System.Windows.Forms.Button();
+            this.btnUnset = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAsset)).BeginInit();
             this.SuspendLayout();
             // 
@@ -243,7 +244,7 @@ namespace DepreciationDBApp.Forms
             // 
             // btnSet
             // 
-            this.btnSet.Location = new System.Drawing.Point(142, 358);
+            this.btnSet.Location = new System.Drawing.Point(95, 356);
             this.btnSet.Name = "btnSet";
             this.btnSet.Size = new System.Drawing.Size(74, 27);
             this.btnSet.TabIndex = 52;
@@ -251,11 +252,22 @@ namespace DepreciationDBApp.Forms
             this.btnSet.UseVisualStyleBackColor = true;
             this.btnSet.Click += new System.EventHandler(this.btnSet_Click);
             // 
+            // btnUnset
+            // 
+            this.btnUnset.Location = new System.Drawing.Point(186, 356);
+            this.btnUnset.Name = "btnUnset";
+            this.btnUnset.Size = new System.Drawing.Size(74, 27);
+            this.btnUnset.TabIndex = 53;
+            this.btnUnset.Text = "UnSet Assets";
+            this.btnUnset.UseVisualStyleBackColor = true;
+            this.btnUnset.Click += new System.EventHandler(this.btnUnset_Click);
+            // 
             // FrmEmpleado
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(908, 395);
+            this.Controls.Add(this.btnUnset);
             this.Controls.Add(this.btnSet);
             this.Controls.Add(this.txtDni);
             this.Controls.Add(this.label7);
@@ -310,5 +322,6 @@ namespace DepreciationDBApp.Forms
         public System.Windows.Forms.TextBox txtDni;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnSet;
+        private System.Windows.Forms.Button btnUnset;
     }
 }

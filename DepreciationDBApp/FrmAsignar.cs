@@ -39,68 +39,90 @@ namespace DepreciationDBApp.Forms
         {
             int contadorFilas = dataGridView1.Rows.GetRowCount(DataGridViewElementStates.Selected);
 
-            Employee employee = employeeService.FindByDni(Dni);
-
-            List<int> assetsIds = new List<int>();
-            List<Asset> assets = new List<Asset>();
-
-            DateTime effectiveDate = dateTimePicker1.Value;
-
-            if(contadorFilas > 1)
+            try
             {
-                DataTable dt = new DataTable();
-                foreach (DataGridViewColumn column in dataGridView1.Columns)
-                    dt.Columns.Add(column.Name, column.CellType);
-                for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
+                Employee employee = employeeService.FindByDni(Dni);
+
+                List<int> assetsIds = new List<int>();
+                List<Asset> assets = new List<Asset>();
+
+                DateTime effectiveDate = dateTimePicker1.Value;
+
+                if (contadorFilas > 1)
                 {
-                    dt.Rows.Add();
-                    for (int j = 0; j < dataGridView1.Columns.Count; j++)
+                    for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
                     {
-                        //dt.Rows[i][j] = dataGridView1.SelectedRows[i].Cells[j].Value;
-                        
-                        //^^^^^^^^^^^
+                        assetsIds.Add((int)dataGridView1.SelectedRows[i].Cells[0].Value);
                     }
-                    assetsIds.Add((int)dataGridView1.SelectedRows[i].Cells[0].Value);
-                }
-                foreach(int id in assetsIds)
-                {
-                    Asset asset = assetService.FindById(id);
-                    if (asset.Status.Equals("Asignado"))
+                    foreach (int id in assetsIds)
                     {
-                        MessageBox.Show("El activo esta actualmente asignado");
-                        return;
-                    }
-                    else
-                    {
-                        asset.Status = "Asignado";
-                        assetService.Update(asset);
+                        Asset asset = assetService.FindById(id);
                         assets.Add(asset);
-                        
                     }
-                    
-                }
-                employeeService.SetAssetsToEmployee(employee, assets, effectiveDate);
+                    employeeService.SetAssetsToEmployee(employee, assets, effectiveDate);
 
-                Dispose();
-            }
-            else
-            {
-                int assetId = (int)dataGridView1.CurrentRow.Cells[0].Value;
-                Asset asset = assetService.FindById(assetId);
-                if (asset.Status.Equals("Asignado"))
-                {
-                    MessageBox.Show("El activo esta actualmente asignado");
-                    return;
+                    Dispose();
                 }
                 else
                 {
-                    asset.Status = "Asignado";
-                    assetService.Update(asset);
+                    int assetId = (int)dataGridView1.CurrentRow.Cells[0].Value;
+                    Asset asset = assetService.FindById(assetId);
+                    employeeService.SetAssetToEmployee(employee, asset, effectiveDate);
                 }
-                employeeService.SetAssetToEmployee(employee, asset, effectiveDate);
+
+                Dispose();
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Error");
+                return;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int contadorFilas = dataGridView1.Rows.GetRowCount(DataGridViewElementStates.Selected);
+
+            Employee employee = employeeService.FindByDni(Dni);
+
+            try
+            {
+                List<int> assetsIds = new List<int>();
+                List<Asset> assets = new List<Asset>();
+
+                if (contadorFilas > 1)
+                {
+                    for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
+                    {
+                        assetsIds.Add((int)dataGridView1.SelectedRows[i].Cells[0].Value);
+                    }
+                    foreach (int id in assetsIds)
+                    {
+                        Asset asset = assetService.FindById(id);
+                        assets.Add(asset);
+
+                    }
+                    employeeService.UnsetAssetsToEmployee(employee, assets);
+
+                    Dispose();
+                }
+                else
+                {
+                    int assetId = (int)dataGridView1.CurrentRow.Cells[0].Value;
+                    Asset asset = assetService.FindById(assetId);
+                    employeeService.UnsetAssetToEmployee(employee, asset);
+                }
+
+                Dispose();
+            }
+            catch (Exception)
+            {
+
+                MessageBox.Show("Surgio un error");
+                return;
             }
 
-            Dispose();
         }
     }
 }

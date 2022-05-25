@@ -81,6 +81,7 @@ namespace DepreciationDBApp.Forms
             frmAsignar.assetService = assetService;
             frmAsignar.employeeService = employeeService;
             frmAsignar.Dni = dni;
+            frmAsignar.button2.Visible = false;
 
             frmAsignar.ShowDialog();
         }
@@ -135,6 +136,19 @@ namespace DepreciationDBApp.Forms
                         break;
                 }
             }
+        }
+
+        private void btnUnset_Click(object sender, EventArgs e)
+        {
+            string dni = dgvAsset.CurrentRow.Cells[6].Value.ToString();
+            FrmAsignar frmAsignar = new FrmAsignar();
+            frmAsignar.employeeService = employeeService;
+            frmAsignar.assetService = assetService;
+            frmAsignar.Dni = dni;
+            frmAsignar.button1.Visible = false;
+            frmAsignar.dateTimePicker1.Visible = false;
+
+            frmAsignar.ShowDialog();
         }
     }
 }

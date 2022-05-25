@@ -14,5 +14,7 @@ namespace DepreciationDBApp.Applications.Interfaces
         IEnumerable<Employee> FindByLastnames(string lastName);
         bool SetAssetToEmployee(Employee employee, Asset asset, DateTime efectiveDate);
         bool SetAssetsToEmployee(Employee employee, List<Asset> assets, DateTime efectiveDate);
+        bool UnsetAssetToEmployee(Employee employee, Asset asset);
+        bool UnsetAssetsToEmployee(Employee employee, List<Asset> assets);
     }
 }

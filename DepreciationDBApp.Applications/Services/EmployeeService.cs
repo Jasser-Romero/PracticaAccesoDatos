@@ -95,7 +95,11 @@ namespace DepreciationDBApp.Applications.Services
 
         public bool SetAssetToEmployee(Employee employee, Asset asset, DateTime efectiveDate)
         {
-            ValidateAssetEmployee(employee, asset);
+            if (asset.Status.Equals("Asignado"))
+            {
+                throw new Exception("El activo ya esta asignado");
+            }
+            
             AssetEmployee assetEmployee = new AssetEmployee()
             {
                 AssetId = asset.Id,
@@ -103,8 +107,56 @@ namespace DepreciationDBApp.Applications.Services
                 Date = efectiveDate,
                 IsActive = true
             };
-            assetEmployeeRepository.Create(assetEmployee);
-            return true;
+            return assetEmployeeRepository.Create(assetEmployee) > 0;
+            
+        }
+
+        public bool UnsetAssetsToEmployee(Employee employee, List<Asset> assets)
+        {
+            bool success = false;
+            using IDbContextTransaction transaction = employeeRepository.GetTransaction();
+            try
+            {
+
+                if (assets == null || assets.Count == 0)
+                {
+                    throw new ArgumentNullException("La lista no puede estar vacia");
+                }
+                foreach (Asset asset in assets)
+                {
+                    success = UnsetAssetToEmployee(employee, asset);
+                    if (!success)
+                    {
+                        throw new Exception($"Fallo al actualizar el asset, Id{asset.Id}.");
+                    }
+                }
+
+                if (success)
+                {
+                    transaction.Commit();
+                }
+
+                return success;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool UnsetAssetToEmployee(Employee employee, Asset asset)
+        {
+            try
+            {
+                asset.Status = "Disponible";
+                return assetRepository.Update(asset) > 0;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public int Update(Employee t)
@@ -124,7 +176,7 @@ namespace DepreciationDBApp.Applications.Services
                 throw new ArgumentNullException(nameof(asset));
             }
 
-            if (asset.Status.Equals("No disponible"))
+            if (asset.Status.Equals("Asignado"))
             {
                 //TODO: Add enums for asset and employee status
                 throw new Exception("");
